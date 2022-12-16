@@ -24,8 +24,8 @@ resource "aws_ecs_task_definition" "this" {
     {
       name      = lookup(each.value, "name", var.app_name)
       image     = each.value.ecr_image_url
-      cpu       = lookup(each.value, "cpu", 1024)
-      memory    = lookup(each.value, "memory", 2048)
+      cpu       = lookup(each.value, "cpu", 512)
+      memory    = lookup(each.value, "memory", 1024)
       essential = true
       portMappings = [
         {
@@ -83,11 +83,5 @@ resource "aws_ecs_service" "this" {
     target_group_arn = lookup(each.value, "target_group_arn", null)
     container_name   = lookup(each.value, "container_name", null)
     container_port   = lookup(each.value, "container_port", null)
-  }
-
-  lifecycle {
-    ignore_changes = [
-      task_definition
-    ]
   }
 }
