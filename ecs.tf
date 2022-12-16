@@ -75,13 +75,13 @@ resource "aws_ecs_service" "this" {
     subnets         = var.subnets
     security_groups = [aws_security_group.ecs.id]
   }
-  service_registries {
-    registry_arn = var.enable_service_discovery == "yes" ? one(aws_service_discovery_service.this.*.arn) : null
+  # service_registries {
+  #   registry_arn = var.enable_service_discovery == "yes" ? one(aws_service_discovery_service.this.*.arn) : null
 
-  }
-  load_balancer {
-    target_group_arn = lookup(each.value, "target_group_arn", null)
-    container_name   = lookup(each.value, "container_name", null)
-    container_port   = lookup(each.value, "container_port", null)
-  }
+  # }
+  # load_balancer {
+  #   target_group_arn = lookup(each.value, "target_group_arn", null)
+  #   container_name   = lookup(each.value, "container_name", null)
+  #   container_port   = lookup(each.value, "container_port", null)
+  # }
 }
