@@ -1,12 +1,13 @@
 variable "app_name" {
   description = "Application Name"
   type        = string
+  default     = ""
 }
 
 variable "account_id" {
   description = "AWS Account ID"
   type        = string
-
+  default     = ""
 }
 
 variable "ecs_cluster_name" {
@@ -25,20 +26,24 @@ variable "log_retention_in_days" {
 variable "vpc_id" {
   description = "vpc id"
   type        = string
+  default     = ""
 }
 
 variable "subnets" {
   description = "list of subnets for EFS"
   type        = list(string)
+  default     = []
 }
 
 variable "region" {
   type        = string
+  default     = ""
   description = "Amazon region to use for retrieving data (e.g us-east-1)"
 }
 
 variable "environment" {
   type        = string
+  default     = ""
   description = "The environment where the state backend will live."
 }
 
@@ -85,74 +90,3 @@ variable "container_env_vars" {
   default = []
 }
 
-variable "cicd_role" {
-  type        = string
-  default     = ""
-  description = "CICD role for CodePipeline"
-}
-
-variable "s3_artifact_store" {
-  type        = string
-  default     = ""
-  description = "S3 bucket to store artifacts"
-}
-
-variable "artifact_bucket_key" {
-  type        = string
-  default     = ""
-  description = "KMS Key ID associated with artifacts bucket"
-}
-
-variable "codestar_connection_arn" {
-  type        = string
-  default     = ""
-  description = "CodeStar Connection ARN to connect with GitHub"
-}
-
-variable "github_repo_owner" {
-  type        = string
-  default     = ""
-  description = "GitHub repo org owner"
-}
-
-variable "github_repo_name" {
-  type        = string
-  default     = ""
-  description = "GitHub repo name"
-}
-
-variable "github_repo_branch" {
-  type        = string
-  default     = ""
-  description = "GitHub branch name"
-}
-
-variable "build_environments" {
-  type        = any
-  description = "Build environments"
-  default     = []
-}
-
-variable "prodduction_approval" {
-  type        = bool
-  default     = false
-  description = "Whether or not to enable prod approvals before deployments"
-}
-
-variable "deploy_environments" {
-  type        = any
-  default     = []
-  description = "Deploy environments"
-}
-
-variable "pipeline_type" {
-  type        = string
-  default     = "ecs"
-  description = "Pipeline type identifier"
-}
-
-variable "enable_codepipeline" {
-  type        = bool
-  default     = false
-  description = "Enable or disable CodePipeline"
-}
