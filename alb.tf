@@ -55,20 +55,20 @@ resource "aws_lb_listener_rule" "this" {
     target_group_arn = aws_lb_target_group.alb[each.key].arn
   }
 
-  dynamic "condition" {
-    # for_each = [for condition_rule in each.value.conditions :
-    #   condition_rule
-    #   if length(lookup(condition_rule, "path_patterns", [])) > 0
-    # ]
-    for_each = each.value.attach_alb == "yes" ? [1] : []
-    content {
-      path_pattern {
-        values = lookup(each.value, "path_patterns", [])
-      }
-    }
+  #dynamic "condition" {
+  # for_each = [for condition_rule in each.value.conditions :
+  #   condition_rule
+  #   if length(lookup(condition_rule, "path_patterns", [])) > 0
+  # ]
 
+  condition {
+    path_pattern {
+      values = lookup(each.value, "path_patterns", [])
+    }
   }
+
 }
+
 
 # Listener (redirects traffic from the load balancer to the target group)
 resource "aws_lb_listener" "alb_http_redirect" {
@@ -116,8 +116,9 @@ resource "aws_lb_listener" "alb_https" {
   default_action {
     type = "fixed-response"
     fixed_response {
-      content_type = "text/html"
+      content_type = "text/plain"
       message_body = "Invalid Endpoint"
+      status_code  = "200"
     }
 
   }
