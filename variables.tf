@@ -211,11 +211,6 @@ variable "lb_access_logs_prefix" {
 
 }
 
-variable "domain_names" {
-  type        = list(string)
-  default     = []
-  description = "list of host header domains"
-}
 locals {
   common_tags = {
     environment = var.environment
