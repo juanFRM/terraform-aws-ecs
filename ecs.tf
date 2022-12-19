@@ -76,9 +76,9 @@ resource "aws_ecs_service" "this" {
     security_groups = [aws_security_group.ecs.id]
   }
   dynamic "service_registries" {
-    for_each = var.enable_service_discovery == "yes" && length(var.ecs_internal_services) > 0 ? [1] : []
+    for_each = var.enable_service_discovery == "yes" ? [1] : []
     content {
-      registry_arn = aws_service_discovery_service.this[index(var.ecs_internal_services, service_registries.key)].arn
+      registry_arn = aws_service_discovery_service.this[index(var.ecs_internal_services, each.key)].arn
     }
   }
 
