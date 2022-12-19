@@ -56,10 +56,10 @@ resource "aws_lb_listener_rule" "this" {
   }
 
   dynamic "condition" {
-    for_each = each.value.attach_alb == "yes" ? [1] : []
+    for_each = each.value.attach_alb == "yes" ? [1] : null
     content {
       path_pattern {
-        values = each.value.path_patterns
+        values = lookup(each.value, "path_patterns", null)
       }
     }
 
