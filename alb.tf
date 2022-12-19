@@ -22,9 +22,9 @@ resource "aws_lb" "alb" {
 
 # Target group
 resource "aws_lb_target_group" "alb" {
-  for_each = var.ecs_services
+  for_each = var.alb_target_groups
 
-  name        = lookup(each.value, "target_group_name", each.value.name)
+  name        = each.value.name
   port        = lookup(each.value, "target_group_port", var.target_group_port)
   protocol    = lookup(each.value, "target_group_protocol", var.target_group_protocol)
   vpc_id      = var.vpc_id
@@ -47,7 +47,7 @@ resource "aws_lb_target_group" "alb" {
 # ALB rule
 
 resource "aws_lb_listener_rule" "this" {
-  for_each     = var.ecs_services
+  for_each     = var.alb_target_groups
   listener_arn = var.create_alb && var.http_redirect == "no" ? one(aws_lb_listener.alb_http.*.arn) : one(aws_lb_listener.alb_https.*.arn)
 
   action {
