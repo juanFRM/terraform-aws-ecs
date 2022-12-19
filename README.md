@@ -15,7 +15,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_alb"></a> [alb](#module\_alb) | github.com/revstarconsulting/terraform-aws-load-balancer | v1.3.8 |
+| <a name="module_alb"></a> [alb](#module\_alb) | github.com/revstarconsulting/terraform-aws-load-balancer | v1.3.9 |
 
 ## Resources
 
