@@ -6,8 +6,8 @@ resource "aws_service_discovery_private_dns_namespace" "this" {
 }
 
 resource "aws_service_discovery_service" "this" {
-  for_each = var.enable_service_discovery == "yes" ? var.ecs_services : {}
-  name     = each.key
+  count = var.enable_service_discovery == "yes" ? length(var.ecs_internal_services) : 0
+  name  = element(var.ecs_internal_services, count.index)
 
   dns_config {
     namespace_id = one(aws_service_discovery_private_dns_namespace.this.*.id)
