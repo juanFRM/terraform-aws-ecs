@@ -65,6 +65,9 @@ resource "aws_lb_listener_rule" "this" {
     path_pattern {
       values = lookup(each.value, "path_patterns", [])
     }
+    host_header {
+      values = var.domain_names
+    }
   }
 
 }
