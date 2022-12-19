@@ -76,7 +76,7 @@ resource "aws_ecs_service" "this" {
     security_groups = [aws_security_group.ecs.id]
   }
   service_registries {
-    registry_arn = var.enable_service_discovery == "yes" ? one(aws_service_discovery_service.this.*.arn) : null
+    registry_arn = var.enable_service_discovery == "yes" ? aws_service_discovery_service.this[each.key].arn : null
   }
 
   # load_balancer {
