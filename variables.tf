@@ -90,3 +90,8 @@ variable "container_env_vars" {
   default = []
 }
 
+variable "enable_load_balancer" {
+  type    = string
+  default = "no"
+}
+
