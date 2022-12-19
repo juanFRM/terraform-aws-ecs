@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "this" {
       essential = true
       portMappings = [
         {
-          containerPort = each.value.container_port
+          containerPort = lookup(each.value, "container_port", var.container_port)
         }
       ]
       environment = lookup(each.value, "env_vars", null)
@@ -75,13 +75,20 @@ resource "aws_ecs_service" "this" {
     subnets         = var.subnets
     security_groups = [aws_security_group.ecs.id]
   }
-  service_registries {
-    registry_arn = var.enable_service_discovery == "yes" ? one(aws_service_discovery_service.this.*.arn) : null
-
+  dynamic "service_registries" {
+    for_each = var.enable_service_discovery == "yes" ? [1] : []
+    content {
+      registry_arn = aws_service_discovery_service.this[index(var.ecs_internal_services, each.key)].arn
+    }
   }
-  load_balancer {
-    target_group_arn = lookup(each.value, "target_group_arn", null)
-    container_name   = lookup(each.value, "container_name", null)
-    container_port   = lookup(each.value, "container_port", null)
+
+  dynamic "load_balancer" {
+    for_each = each.value.attach_alb == "yes" ? [1] : []
+    content {
+      target_group_arn = lookup(each.value, "target_group_arn", aws_lb_target_group.alb[each.key].arn)
+      container_name   = lookup(each.value, "container_name", var.task_definitions[each.key].name)
+      container_port   = lookup(each.value, "container_port", var.container_port)
+    }
+
   }
 }
