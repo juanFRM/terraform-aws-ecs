@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "this" {
       essential = true
       portMappings = [
         {
-          containerPort = each.value.container_port
+          containerPort = lookup(each.value, "container_port", var.container_port)
         }
       ]
       environment = lookup(each.value, "env_vars", null)

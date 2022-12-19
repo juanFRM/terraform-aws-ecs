@@ -90,6 +90,12 @@ variable "container_env_vars" {
   default = []
 }
 
+variable "container_port" {
+  type        = number
+  default     = null
+  description = "global variable for container port"
+}
+
 
 # Load balancer variables
 variable "enable_load_balancer" {
