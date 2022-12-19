@@ -90,8 +90,36 @@ variable "container_env_vars" {
   default = []
 }
 
+
+# Load balancer variables
 variable "enable_load_balancer" {
   type    = string
   default = "no"
 }
 
+variable "internal_load_balancer" {
+  type    = string
+  default = "no"
+}
+
+variable "public_subnets" {
+  type        = list(any)
+  default     = []
+  description = "list of public subnets for alb"
+}
+
+variable "logging_bucket_name" {
+  type    = string
+  default = ""
+}
+
+variable "acm_certificate_arn" {
+  type        = string
+  default     = ""
+  description = "acm cert arn for https alb listener"
+}
+
+variable "http_redirect" {
+  type    = string
+  default = ""
+}
