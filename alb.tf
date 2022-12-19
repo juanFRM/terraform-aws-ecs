@@ -24,7 +24,7 @@ resource "aws_lb" "alb" {
 resource "aws_lb_target_group" "alb" {
   for_each = var.ecs_services
 
-  name        = lookup(each.value, "target_group_name", "name")
+  name        = lookup(each.value, "target_group_name", each.value.name)
   port        = lookup(each.value, "target_group_port", var.target_group_port)
   protocol    = lookup(each.value, "target_group_protocol", var.target_group_protocol)
   vpc_id      = var.vpc_id
