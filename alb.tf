@@ -1,7 +1,7 @@
 module "alb" {
   count = var.enable_load_balancer == "yes" ? 1 : 0
 
-  source = "github.com/revstarconsulting/terraform-aws-load-balancer?ref=v1.3.9"
+  source = "github.com/revstarconsulting/terraform-aws-load-balancer?ref=v1.4.0"
 
   environment = var.environment
   create_alb  = true
