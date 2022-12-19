@@ -98,28 +98,28 @@ variable "container_port" {
 
 
 # Load balancer variables
-variable "enable_load_balancer" {
+variable "create_alb" {
+  type    = bool
+  default = false
+}
+
+variable "is_internal" {
   type    = string
   default = "no"
 }
 
-variable "internal_load_balancer" {
-  type    = string
-  default = "no"
-}
-
-variable "public_subnets" {
+variable "lb_subnets" {
   type        = list(any)
   default     = []
   description = "list of public subnets for alb"
 }
 
-variable "logging_bucket_name" {
+variable "logging_lb_bucket_name" {
   type    = string
   default = ""
 }
 
-variable "acm_certificate_arn" {
+variable "certificate_arn" {
   type        = string
   default     = ""
   description = "acm cert arn for https alb listener"
@@ -128,4 +128,90 @@ variable "acm_certificate_arn" {
 variable "http_redirect" {
   type    = string
   default = ""
+}
+
+variable "lb_name" {
+  type        = string
+  description = "Load Balancer Name"
+  default     = ""
+
+}
+
+variable "target_group_name" {
+  type        = string
+  description = "Name of the Load Balancer Target Group"
+  default     = ""
+
+}
+
+variable "alb_ssl_policy" {
+  type        = string
+  description = "ALB SSL Policy for secure listener"
+  default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+}
+
+variable "health_check_path" {
+  description = "Health check path for the default target group"
+  type        = string
+  default     = "/"
+}
+
+variable "health_check_port" {
+  description = "Health check port"
+  type        = string
+  default     = "traffic-port"
+}
+
+variable "health_check_protocol" {
+  description = "Health check protocol"
+  type        = string
+  default     = "TCP"
+
+}
+
+variable "enable_cross_zone_load_balancing" {
+  description = "Whether or not to enable cross zone load balancing. Valid only for NLB"
+  type        = bool
+  default     = false
+}
+
+variable "target_group_protocol" {
+  description = "Protocol to use for routing traffic to the targets."
+  type        = string
+  default     = "HTTP"
+}
+
+variable "target_group_port" {
+  description = "Port on which targets receive traffic"
+  type        = number
+  default     = 3000
+}
+
+variable "target_type" {
+  description = "Type of target to register targets with target group. Valid values are `instance` or `ip`."
+  type        = string
+  default     = "ip"
+}
+
+variable "alb_target_groups" {
+  type        = any
+  description = "map of target groups to be attached to alb"
+  default     = {}
+}
+
+variable "alb_listener_rules" {
+  type        = any
+  description = "map of listener rules"
+  default     = {}
+}
+variable "lb_access_logs_prefix" {
+  description = "Load Balancer access logs prefix"
+  type        = string
+  default     = "ALB"
+
+}
+locals {
+  common_tags = {
+    environment = var.environment
+  }
 }

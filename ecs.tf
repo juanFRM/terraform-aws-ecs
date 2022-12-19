@@ -85,7 +85,7 @@ resource "aws_ecs_service" "this" {
   dynamic "load_balancer" {
     for_each = each.value.enable_alb == "yes" ? [1] : []
     content {
-      target_group_arn = lookup(each.value, "target_group_arn", module.alb[each.key].alb_target_group_arn)
+      target_group_arn = lookup(each.value, "target_group_arn", aws_lb_target_group.alb[each.key].arn)
       container_name   = lookup(each.value, "container_name", "name")
       container_port   = lookup(each.value, "container_port", var.container_port)
     }
