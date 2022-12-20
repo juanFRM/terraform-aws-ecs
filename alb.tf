@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "alb" {
 resource "aws_lb_listener_rule" "this" {
   for_each     = var.alb_target_groups
   listener_arn = var.create_alb && var.http_redirect == "no" ? one(aws_lb_listener.alb_http.*.arn) : one(aws_lb_listener.alb_https.*.arn)
-
+  priority     = lookup(each.value, "priority", 1)
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.alb[each.key].arn
