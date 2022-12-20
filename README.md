@@ -62,6 +62,7 @@ No modules.
 | <a name="input_container_env_vars"></a> [container\_env\_vars](#input\_container\_env\_vars) | n/a | `any` | `[]` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | global variable for container port | `number` | `null` | no |
 | <a name="input_create_alb"></a> [create\_alb](#input\_create\_alb) | Load balancer variables | `bool` | `false` | no |
+| <a name="input_ecr_account_id"></a> [ecr\_account\_id](#input\_ecr\_account\_id) | AWS Account ID where ECR repos are created | `string` | `""` | no |
 | <a name="input_ecr_policy"></a> [ecr\_policy](#input\_ecr\_policy) | ECR policy | `any` | `{}` | no |
 | <a name="input_ecs_applications"></a> [ecs\_applications](#input\_ecs\_applications) | ecs applications | `any` | `{}` | no |
 | <a name="input_ecs_cluster_name"></a> [ecs\_cluster\_name](#input\_ecs\_cluster\_name) | Name of the ECS cluster | `string` | `"ecs-cluster"` | no |

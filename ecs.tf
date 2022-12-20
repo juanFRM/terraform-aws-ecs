@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode([
     {
       name      = lookup(each.value, "name", var.app_name)
-      image     = "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/${each.key}"
+      image     = "${var.ecr_account_id}.dkr.ecr.${var.region}.amazonaws.com/${each.key}"
       cpu       = lookup(each.value, "cpu", 512)
       memory    = lookup(each.value, "memory", 1024)
       essential = true

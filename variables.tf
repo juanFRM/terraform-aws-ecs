@@ -16,6 +16,12 @@ variable "account_id" {
   default     = ""
 }
 
+variable "ecr_account_id" {
+  description = "AWS Account ID where ECR repos are created"
+  type        = string
+  default     = ""
+}
+
 variable "ecs_cluster_name" {
   type        = string
   description = "Name of the ECS cluster"
