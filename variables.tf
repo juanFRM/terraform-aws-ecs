@@ -4,6 +4,12 @@ variable "app_name" {
   default     = ""
 }
 
+variable "app_count" {
+  description = "Global var for number of replicas"
+  type        = number
+  default     = 0
+}
+
 variable "account_id" {
   description = "AWS Account ID"
   type        = string
@@ -83,6 +89,18 @@ variable "ecs_services" {
   type        = any
   default     = {}
   description = "ecs services"
+}
+
+variable "ecs_applications" {
+  type        = any
+  default     = {}
+  description = "ecs applications"
+}
+
+variable "ecr_policy" {
+  type        = any
+  default     = {}
+  description = "ECR policy"
 }
 
 variable "container_env_vars" {
