@@ -86,7 +86,7 @@ resource "aws_ecs_service" "this" {
     for_each = each.value.attach_alb == "yes" ? [1] : []
     content {
       target_group_arn = lookup(each.value, "target_group_arn", aws_lb_target_group.alb[each.key].arn)
-      container_name   = lookup(each.value, "container_name", var.task_definitions[each.key].name)
+      container_name   = lookup(each.value, "container_name", var.ecs_applications[each.key].name)
       container_port   = lookup(each.value, "container_port", var.container_port)
     }
 

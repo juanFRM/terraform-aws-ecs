@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "app" {
-  for_each             = var.ecs_applications
+  for_each             = var.environment == "dev" ? var.ecs_applications : {}
   name                 = each.key
   image_tag_mutability = "MUTABLE"
   tags = {
@@ -16,7 +16,7 @@ resource "aws_ecr_repository" "app" {
 }
 
 resource "aws_ecr_repository_policy" "crossaccount" {
-  for_each   = var.ecs_applications
+  for_each   = var.environment == "dev" ? var.ecs_applications : {}
   repository = aws_ecr_repository.app[each.key].name
   policy     = var.ecr_policy
 
