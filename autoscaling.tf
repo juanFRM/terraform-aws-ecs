@@ -16,7 +16,7 @@ resource "aws_appautoscaling_policy" "ecs_scale_cpu" {
     for k, v in var.ecs_applications : k => v
     if v.enable_service != ""
   }
-  name               = "ecs-application-scaling-policy-cpu"
+  name               = "${aws_ecs_service.this[each.key].name}-scaling-policy-cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs[each.key].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs[each.key].scalable_dimension
@@ -36,7 +36,7 @@ resource "aws_appautoscaling_policy" "ecs_scale_memory" {
     for k, v in var.ecs_applications : k => v
     if v.enable_service != ""
   }
-  name               = "ecs-application-scaling-policy-memory"
+  name               = "${aws_ecs_service.this[each.key].name}-scaling-policy-memory"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs[each.key].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs[each.key].scalable_dimension
@@ -49,27 +49,4 @@ resource "aws_appautoscaling_policy" "ecs_scale_memory" {
     target_value = 80
   }
   depends_on = [aws_appautoscaling_target.ecs]
-}
-
-resource "aws_appautoscaling_policy" "ecs_cpu" {
-  for_each = {
-    for k, v in var.ecs_applications : k => v
-    if v.enable_service != ""
-  }
-  name               = "scale-up"
-  policy_type        = "StepScaling"
-  resource_id        = aws_appautoscaling_target.ecs[each.key].resource_id
-  scalable_dimension = aws_appautoscaling_target.ecs[each.key].scalable_dimension
-  service_namespace  = aws_appautoscaling_target.ecs[each.key].service_namespace
-
-  step_scaling_policy_configuration {
-    adjustment_type         = "ChangeInCapacity"
-    cooldown                = 60
-    metric_aggregation_type = "Maximum"
-
-    step_adjustment {
-      metric_interval_upper_bound = 0
-      scaling_adjustment          = 1
-    }
-  }
 }
