@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "this" {
 resource "aws_ecs_service" "this" {
   for_each = {
     for k, v in var.ecs_applications : k => v
-    if v.enable_service != ""
+    if v.enable_service == "yes"
   }
 
   name            = "${each.value.name}-service"
