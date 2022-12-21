@@ -51,6 +51,7 @@ resource "aws_codebuild_project" "this" {
       REGION         = var.region
       AWS_ACCOUNT_ID = var.account_id
       ECR_REPO_NAME  = each.key
+      CONTAINER_NAME = each.value.name
     })
   }
 
