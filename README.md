@@ -25,6 +25,7 @@ No modules.
 | [aws_cloudwatch_log_group.app_log_group_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_stream.app_log_stream_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_stream) | resource |
 | [aws_codebuild_project.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
+| [aws_codepipeline.pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline) | resource |
 | [aws_ecr_repository.app](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
 | [aws_ecr_repository_policy.crossaccount](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
 | [aws_ecs_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster) | resource |
@@ -62,11 +63,15 @@ No modules.
 | <a name="input_alb_target_groups"></a> [alb\_target\_groups](#input\_alb\_target\_groups) | map of target groups to be attached to alb | `any` | `{}` | no |
 | <a name="input_app_count"></a> [app\_count](#input\_app\_count) | Global var for number of replicas | `number` | `1` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Application Name | `string` | `""` | no |
+| <a name="input_artifact_bucket_key"></a> [artifact\_bucket\_key](#input\_artifact\_bucket\_key) | KMS key associated with artifact bucket | `string` | `""` | no |
 | <a name="input_build_environment_variables"></a> [build\_environment\_variables](#input\_build\_environment\_variables) | env vars for codebuild | `any` | `{}` | no |
 | <a name="input_buildspec_file"></a> [buildspec\_file](#input\_buildspec\_file) | buildspec file for ecs | `string` | `""` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | acm cert arn for https alb listener | `string` | `""` | no |
 | <a name="input_cicd_role"></a> [cicd\_role](#input\_cicd\_role) | iam role for cicd | `string` | `""` | no |
 | <a name="input_codebuild_security_group"></a> [codebuild\_security\_group](#input\_codebuild\_security\_group) | codebuild security group | `string` | `""` | no |
+| <a name="input_codepipeline_build_environments"></a> [codepipeline\_build\_environments](#input\_codepipeline\_build\_environments) | build environment | `any` | `{}` | no |
+| <a name="input_codepipeline_deploy_environments"></a> [codepipeline\_deploy\_environments](#input\_codepipeline\_deploy\_environments) | deploy environments | `any` | `{}` | no |
+| <a name="input_codestar_connection_arn"></a> [codestar\_connection\_arn](#input\_codestar\_connection\_arn) | codestar connection arn | `string` | `""` | no |
 | <a name="input_compute_type"></a> [compute\_type](#input\_compute\_type) | codebuild compute type | `string` | `""` | no |
 | <a name="input_container_env_vars"></a> [container\_env\_vars](#input\_container\_env\_vars) | n/a | `any` | `[]` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | global variable for container port | `number` | `null` | no |
@@ -96,6 +101,10 @@ No modules.
 | <a name="input_private_dns"></a> [private\_dns](#input\_private\_dns) | private dns for internal service discovery | `string` | `""` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | project name for codebuild | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | Amazon region to use for retrieving data (e.g us-east-1) | `string` | `""` | no |
+| <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | repo branch | `string` | `""` | no |
+| <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | repo name | `string` | `""` | no |
+| <a name="input_repo_owner"></a> [repo\_owner](#input\_repo\_owner) | repo owner | `string` | `""` | no |
+| <a name="input_s3_artifact_store"></a> [s3\_artifact\_store](#input\_s3\_artifact\_store) | s3 bucket to store pipeline artifacts | `string` | `""` | no |
 | <a name="input_s3_build_logs_bucket"></a> [s3\_build\_logs\_bucket](#input\_s3\_build\_logs\_bucket) | build logs s3 bucket | `string` | `""` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | list of subnets for EFS | `list(string)` | `[]` | no |
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | Name of the Load Balancer Target Group | `string` | `""` | no |

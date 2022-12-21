@@ -292,6 +292,52 @@ variable "codebuild_security_group" {
   description = "codebuild security group"
 }
 
+variable "s3_artifact_store" {
+  type        = string
+  default     = ""
+  description = "s3 bucket to store pipeline artifacts"
+}
+
+variable "artifact_bucket_key" {
+  type        = string
+  default     = ""
+  description = "KMS key associated with artifact bucket"
+}
+
+variable "codestar_connection_arn" {
+  type        = string
+  default     = ""
+  description = "codestar connection arn"
+}
+variable "repo_owner" {
+  type        = string
+  default     = ""
+  description = "repo owner"
+}
+
+variable "repo_name" {
+  type        = string
+  default     = ""
+  description = "repo name"
+}
+
+variable "repo_branch" {
+  type        = string
+  default     = ""
+  description = "repo branch"
+}
+
+variable "codepipeline_build_environments" {
+  type        = any
+  default     = {}
+  description = "build environment"
+}
+
+variable "codepipeline_deploy_environments" {
+  type        = any
+  default     = {}
+  description = "deploy environments"
+}
 locals {
   common_tags = {
     environment = var.environment
