@@ -34,7 +34,7 @@ resource "aws_appautoscaling_policy" "ecs_scale_cpu" {
 resource "aws_appautoscaling_policy" "ecs_scale_memory" {
   for_each = {
     for k, v in var.ecs_applications : k => v
-    if v.enable_service != "yes"
+    if v.enable_service == "yes"
   }
   name               = "${aws_ecs_service.this[each.key].name}-scaling-policy-memory"
   policy_type        = "TargetTrackingScaling"
