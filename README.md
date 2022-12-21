@@ -44,7 +44,6 @@ No modules.
 | [aws_lb_listener.alb_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
-| [aws_security_group.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.ecs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.efs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.load_balancer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
@@ -67,6 +66,7 @@ No modules.
 | <a name="input_buildspec_file"></a> [buildspec\_file](#input\_buildspec\_file) | buildspec file for ecs | `string` | `""` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | acm cert arn for https alb listener | `string` | `""` | no |
 | <a name="input_cicd_role"></a> [cicd\_role](#input\_cicd\_role) | iam role for cicd | `string` | `""` | no |
+| <a name="input_codebuild_security_group"></a> [codebuild\_security\_group](#input\_codebuild\_security\_group) | codebuild security group | `string` | `""` | no |
 | <a name="input_compute_type"></a> [compute\_type](#input\_compute\_type) | codebuild compute type | `string` | `""` | no |
 | <a name="input_container_env_vars"></a> [container\_env\_vars](#input\_container\_env\_vars) | n/a | `any` | `[]` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | global variable for container port | `number` | `null` | no |

@@ -41,7 +41,7 @@ resource "aws_codebuild_project" "this" {
   vpc_config {
     vpc_id             = var.vpc_id
     subnets            = var.subnets
-    security_group_ids = [one(aws_security_group.codebuild.*.id)]
+    security_group_ids = [var.codebuild_security_group]
   }
 
 

@@ -286,6 +286,12 @@ variable "buildspec_file" {
   description = "buildspec file for ecs"
 }
 
+variable "codebuild_security_group" {
+  type        = string
+  default     = ""
+  description = "codebuild security group"
+}
+
 locals {
   common_tags = {
     environment = var.environment
