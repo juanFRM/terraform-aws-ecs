@@ -44,6 +44,31 @@ resource "aws_lb_target_group" "alb" {
   }
 }
 
+# Target Group for BG Deployments
+
+resource "aws_lb_target_group" "alb_bg" {
+  for_each = var.enable_bluegreen_deployments == "yes" ? var.alb_target_groups : {}
+
+  name        = each.value.name
+  port        = lookup(each.value, "target_group_port", var.target_group_port)
+  protocol    = lookup(each.value, "target_group_protocol", var.target_group_protocol)
+  vpc_id      = var.vpc_id
+  target_type = lookup(each.value, "target_type", "ip")
+
+  tags       = local.common_tags
+  depends_on = [aws_lb.alb]
+
+  health_check {
+    path                = lookup(each.value, "health_check_path", "/")
+    port                = lookup(each.value, "health_check_port", "traffic-port")
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    timeout             = 10
+    interval            = 30
+    matcher             = "200,403,404,400,401,301,302"
+  }
+}
+
 # ALB rule
 
 resource "aws_lb_listener_rule" "this" {
@@ -112,6 +137,26 @@ resource "aws_lb_listener" "alb_https" {
   ssl_policy        = var.alb_ssl_policy
   certificate_arn   = var.certificate_arn
   depends_on        = [aws_lb_target_group.alb]
+
+  default_action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Invalid Endpoint"
+      status_code  = "200"
+    }
+
+  }
+}
+
+resource "aws_lb_listener" "alb_https_bg" {
+  count             = var.create_alb && var.certificate_arn != "" && var.http_redirect == "yes" && var.enable_bluegreen_deployments == "yes" ? 1 : 0
+  load_balancer_arn = aws_lb.alb[0].id
+  port              = "9443"
+  protocol          = "HTTPS"
+  ssl_policy        = var.alb_ssl_policy
+  certificate_arn   = var.certificate_arn
+  depends_on        = [aws_lb_target_group.alb_bg]
 
   default_action {
     type = "fixed-response"

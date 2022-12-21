@@ -243,6 +243,12 @@ variable "enable_cicd" {
   description = "enable or disable cicd pipeline"
 }
 
+variable "enable_bluegreen_deployments" {
+  type        = string
+  default     = "no"
+  description = "enable or disable BG deployments"
+}
+
 variable "project_name" {
   type        = string
   description = "project name for codebuild"
@@ -331,6 +337,31 @@ variable "deploy_environments" {
   default     = {}
   description = "deploy environments"
 }
+
+variable "deployment_config_name" {
+  type        = string
+  default     = "CodeDeployDefault.ECSAllAtOnce"
+  description = "CodeDeploy deployment config name"
+}
+
+variable "action_on_timeout" {
+  type        = string
+  default     = "STOP_DEPLOYMENT"
+  description = "action to be taken during timeout"
+}
+
+variable "wait_time_in_minutes" {
+  type        = number
+  default     = 20
+  description = "The number of minutes to wait before the status of a blue/green deployment changed to Stopped if rerouting is not started manually."
+}
+
+variable "termination_wait_time_in_minutes" {
+  type        = number
+  default     = 5
+  description = "The number of minutes to wait after a successful blue/green deployment before terminating instances from the original environment"
+}
+
 locals {
   common_tags = {
     environment = var.environment

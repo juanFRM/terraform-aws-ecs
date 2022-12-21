@@ -25,6 +25,8 @@ No modules.
 | [aws_cloudwatch_log_group.app_log_group_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_stream.app_log_stream_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_stream) | resource |
 | [aws_codebuild_project.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
+| [aws_codedeploy_app.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_app) | resource |
+| [aws_codedeploy_deployment_group.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group) | resource |
 | [aws_codepipeline.pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline) | resource |
 | [aws_ecr_repository.app](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
 | [aws_ecr_repository_policy.crossaccount](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
@@ -43,8 +45,10 @@ No modules.
 | [aws_lb_listener.alb_http](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener.alb_http_redirect](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener.alb_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_listener.alb_https_bg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
+| [aws_lb_target_group.alb_bg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_security_group.ecs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.efs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.load_balancer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
@@ -58,6 +62,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | AWS Account ID | `string` | `""` | no |
+| <a name="input_action_on_timeout"></a> [action\_on\_timeout](#input\_action\_on\_timeout) | action to be taken during timeout | `string` | `"STOP_DEPLOYMENT"` | no |
 | <a name="input_alb_listener_rules"></a> [alb\_listener\_rules](#input\_alb\_listener\_rules) | map of listener rules | `any` | `{}` | no |
 | <a name="input_alb_ssl_policy"></a> [alb\_ssl\_policy](#input\_alb\_ssl\_policy) | ALB SSL Policy for secure listener | `string` | `"ELBSecurityPolicy-TLS-1-2-Ext-2018-06"` | no |
 | <a name="input_alb_target_groups"></a> [alb\_target\_groups](#input\_alb\_target\_groups) | map of target groups to be attached to alb | `any` | `{}` | no |
@@ -75,12 +80,14 @@ No modules.
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | global variable for container port | `number` | `null` | no |
 | <a name="input_create_alb"></a> [create\_alb](#input\_create\_alb) | Load balancer variables | `bool` | `false` | no |
 | <a name="input_deploy_environments"></a> [deploy\_environments](#input\_deploy\_environments) | deploy environments | `any` | `{}` | no |
+| <a name="input_deployment_config_name"></a> [deployment\_config\_name](#input\_deployment\_config\_name) | CodeDeploy deployment config name | `string` | `"CodeDeployDefault.ECSAllAtOnce"` | no |
 | <a name="input_ecr_account_id"></a> [ecr\_account\_id](#input\_ecr\_account\_id) | AWS Account ID where ECR repos are created | `string` | `""` | no |
 | <a name="input_ecr_policy"></a> [ecr\_policy](#input\_ecr\_policy) | ECR policy | `any` | `{}` | no |
 | <a name="input_ecs_applications"></a> [ecs\_applications](#input\_ecs\_applications) | ecs applications | `any` | `{}` | no |
 | <a name="input_ecs_cluster_name"></a> [ecs\_cluster\_name](#input\_ecs\_cluster\_name) | Name of the ECS cluster | `string` | `"ecs-cluster"` | no |
 | <a name="input_ecs_internal_services"></a> [ecs\_internal\_services](#input\_ecs\_internal\_services) | list of internal service discoveries | `any` | `[]` | no |
 | <a name="input_ecs_services"></a> [ecs\_services](#input\_ecs\_services) | ecs services | `any` | `{}` | no |
+| <a name="input_enable_bluegreen_deployments"></a> [enable\_bluegreen\_deployments](#input\_enable\_bluegreen\_deployments) | enable or disable BG deployments | `string` | `"no"` | no |
 | <a name="input_enable_cicd"></a> [enable\_cicd](#input\_enable\_cicd) | enable or disable cicd pipeline | `string` | `"no"` | no |
 | <a name="input_enable_cross_zone_load_balancing"></a> [enable\_cross\_zone\_load\_balancing](#input\_enable\_cross\_zone\_load\_balancing) | Whether or not to enable cross zone load balancing. Valid only for NLB | `bool` | `false` | no |
 | <a name="input_enable_service_discovery"></a> [enable\_service\_discovery](#input\_enable\_service\_discovery) | whether or not to enable private service discovery | `string` | `"no"` | no |
@@ -111,7 +118,9 @@ No modules.
 | <a name="input_target_group_protocol"></a> [target\_group\_protocol](#input\_target\_group\_protocol) | Protocol to use for routing traffic to the targets. | `string` | `"HTTP"` | no |
 | <a name="input_target_type"></a> [target\_type](#input\_target\_type) | Type of target to register targets with target group. Valid values are `instance` or `ip`. | `string` | `"ip"` | no |
 | <a name="input_task_definitions"></a> [task\_definitions](#input\_task\_definitions) | ecs task definitions | `any` | `{}` | no |
+| <a name="input_termination_wait_time_in_minutes"></a> [termination\_wait\_time\_in\_minutes](#input\_termination\_wait\_time\_in\_minutes) | The number of minutes to wait after a successful blue/green deployment before terminating instances from the original environment | `number` | `5` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | vpc id | `string` | `""` | no |
+| <a name="input_wait_time_in_minutes"></a> [wait\_time\_in\_minutes](#input\_wait\_time\_in\_minutes) | The number of minutes to wait before the status of a blue/green deployment changed to Stopped if rerouting is not started manually. | `number` | `20` | no |
 
 ## Outputs
 
