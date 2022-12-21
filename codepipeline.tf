@@ -25,7 +25,7 @@ resource "aws_codepipeline" "pipeline" {
 
       configuration = {
         ConnectionArn        = var.codestar_connection_arn
-        FullRepositoryId     = "${var.repo_owner}/${each.value.repo_name}"
+        FullRepositoryId     = "${var.repo_owner}/${lookup(each.value, "repo_name", var.repo_name)}"
         BranchName           = lookup(each.value, "repo_branch", var.repo_branch)
         OutputArtifactFormat = "CODE_ZIP"
       }
@@ -36,31 +36,26 @@ resource "aws_codepipeline" "pipeline" {
   stage {
     name = "Build"
 
-    dynamic "action" {
-      for_each = var.codepipeline_build_environments
-
-      content {
-        name             = action.key
-        category         = "Build"
-        owner            = "AWS"
-        provider         = "CodeBuild"
-        version          = "1"
-        input_artifacts  = ["source"]
-        output_artifacts = ["build-artifacts"]
-
-        role_arn = action.key != "dev" ? action.value["crossaccount_role"] : null
-        configuration = {
-          ProjectName = action.value["codebuild_project"]
-        }
+    action {
+      name             = "Build"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["source"]
+      output_artifacts = ["build-artifacts"]
+      configuration = {
+        ProjectName = aws_codebuild_project.this[each.key].name
       }
     }
+
   }
 
   # Deploy
 
   dynamic "stage" {
     for_each = {
-      for k, v in var.codepipeline_deploy_environments : k => v
+      for k, v in var.deploy_environments : k => v
       if k == "dev"
     }
     content {
@@ -84,7 +79,7 @@ resource "aws_codepipeline" "pipeline" {
 
   dynamic "stage" {
     for_each = {
-      for k, v in var.codepipeline_deploy_environments : k => v
+      for k, v in var.deploy_environments : k => v
       if k == "test"
     }
     content {
@@ -101,7 +96,7 @@ resource "aws_codepipeline" "pipeline" {
 
   dynamic "stage" {
     for_each = {
-      for k, v in var.codepipeline_deploy_environments : k => v
+      for k, v in var.deploy_environments : k => v
       if k == "test"
     }
     content {
@@ -125,7 +120,7 @@ resource "aws_codepipeline" "pipeline" {
 
   dynamic "stage" {
     for_each = {
-      for k, v in var.codepipeline_deploy_environments : k => v
+      for k, v in var.deploy_environments : k => v
       if k == "prod"
     }
     content {
@@ -142,7 +137,7 @@ resource "aws_codepipeline" "pipeline" {
 
   dynamic "stage" {
     for_each = {
-      for k, v in var.codepipeline_deploy_environments : k => v
+      for k, v in var.deploy_environments : k => v
       if k == "prod"
     }
     content {

@@ -69,13 +69,12 @@ No modules.
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | acm cert arn for https alb listener | `string` | `""` | no |
 | <a name="input_cicd_role"></a> [cicd\_role](#input\_cicd\_role) | iam role for cicd | `string` | `""` | no |
 | <a name="input_codebuild_security_group"></a> [codebuild\_security\_group](#input\_codebuild\_security\_group) | codebuild security group | `string` | `""` | no |
-| <a name="input_codepipeline_build_environments"></a> [codepipeline\_build\_environments](#input\_codepipeline\_build\_environments) | build environment | `any` | `{}` | no |
-| <a name="input_codepipeline_deploy_environments"></a> [codepipeline\_deploy\_environments](#input\_codepipeline\_deploy\_environments) | deploy environments | `any` | `{}` | no |
 | <a name="input_codestar_connection_arn"></a> [codestar\_connection\_arn](#input\_codestar\_connection\_arn) | codestar connection arn | `string` | `""` | no |
 | <a name="input_compute_type"></a> [compute\_type](#input\_compute\_type) | codebuild compute type | `string` | `""` | no |
 | <a name="input_container_env_vars"></a> [container\_env\_vars](#input\_container\_env\_vars) | n/a | `any` | `[]` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | global variable for container port | `number` | `null` | no |
 | <a name="input_create_alb"></a> [create\_alb](#input\_create\_alb) | Load balancer variables | `bool` | `false` | no |
+| <a name="input_deploy_environments"></a> [deploy\_environments](#input\_deploy\_environments) | deploy environments | `any` | `{}` | no |
 | <a name="input_ecr_account_id"></a> [ecr\_account\_id](#input\_ecr\_account\_id) | AWS Account ID where ECR repos are created | `string` | `""` | no |
 | <a name="input_ecr_policy"></a> [ecr\_policy](#input\_ecr\_policy) | ECR policy | `any` | `{}` | no |
 | <a name="input_ecs_applications"></a> [ecs\_applications](#input\_ecs\_applications) | ecs applications | `any` | `{}` | no |

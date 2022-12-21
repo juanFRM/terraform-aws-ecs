@@ -326,14 +326,7 @@ variable "repo_branch" {
   default     = ""
   description = "repo branch"
 }
-
-variable "codepipeline_build_environments" {
-  type        = any
-  default     = {}
-  description = "build environment"
-}
-
-variable "codepipeline_deploy_environments" {
+variable "deploy_environments" {
   type        = any
   default     = {}
   description = "deploy environments"
