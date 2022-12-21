@@ -56,7 +56,7 @@ resource "aws_codepipeline" "pipeline" {
   dynamic "stage" {
     for_each = {
       for k, v in var.deploy_environments : k => v
-      if k == "dev"
+      if k == "dev" && each.value.enable_service == "yes"
     }
     content {
       name = "Deploy-Dev"
@@ -80,7 +80,7 @@ resource "aws_codepipeline" "pipeline" {
   dynamic "stage" {
     for_each = {
       for k, v in var.deploy_environments : k => v
-      if k == "test"
+      if k == "test" && each.value.enable_service == "yes"
     }
     content {
       name = "Approve"
@@ -97,7 +97,7 @@ resource "aws_codepipeline" "pipeline" {
   dynamic "stage" {
     for_each = {
       for k, v in var.deploy_environments : k => v
-      if k == "test"
+      if k == "test" && each.value.enable_service == "yes"
     }
     content {
       name = "Deploy-Test"
@@ -121,7 +121,7 @@ resource "aws_codepipeline" "pipeline" {
   dynamic "stage" {
     for_each = {
       for k, v in var.deploy_environments : k => v
-      if k == "prod"
+      if k == "prod" && each.value.enable_service == "yes"
     }
     content {
       name = "Approve"
@@ -138,7 +138,7 @@ resource "aws_codepipeline" "pipeline" {
   dynamic "stage" {
     for_each = {
       for k, v in var.deploy_environments : k => v
-      if k == "prod"
+      if k == "prod" && each.value.enable_service == "yes"
     }
     content {
       name = "Deploy-Prod"
