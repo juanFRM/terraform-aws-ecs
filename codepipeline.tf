@@ -25,8 +25,8 @@ resource "aws_codepipeline" "pipeline" {
 
       configuration = {
         ConnectionArn        = var.codestar_connection_arn
-        FullRepositoryId     = "${var.repo_owner}/${var.repo_name}"
-        BranchName           = var.repo_branch
+        FullRepositoryId     = "${var.repo_owner}/${each.value.repo_name}"
+        BranchName           = lookup(each.value, "repo_branch", var.repo_branch)
         OutputArtifactFormat = "CODE_ZIP"
       }
     }
