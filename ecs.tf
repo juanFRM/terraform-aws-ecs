@@ -62,7 +62,11 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 resource "aws_ecs_service" "this" {
-  for_each        = var.ecs_applications
+  for_each = {
+    for k, v in var.ecs_applications : k => v
+    if v.enable_service != ""
+  }
+
   name            = "${each.value.name}-service"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this[each.key].arn
@@ -91,4 +95,11 @@ resource "aws_ecs_service" "this" {
     }
 
   }
+  #TODO
+  # lifecycle {
+  #   ignore_changes = [
+  #     desired_count
+  #   ]
+  # }
+
 }

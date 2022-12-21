@@ -38,3 +38,16 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
     }
   }
 }
+
+# ECS AutoScaling
+
+data "aws_iam_policy_document" "ecs_autoscale" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["application-autoscaling.amazonaws.com"]
+    }
+  }
+}
