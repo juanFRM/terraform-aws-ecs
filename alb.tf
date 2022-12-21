@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "alb" {
 resource "aws_lb_target_group" "alb_bg" {
   for_each = var.enable_bluegreen_deployments == "yes" ? var.alb_target_groups : {}
 
-  name        = each.value.name
+  name        = "${each.value.name}-test"
   port        = lookup(each.value, "target_group_port", var.target_group_port)
   protocol    = lookup(each.value, "target_group_protocol", var.target_group_protocol)
   vpc_id      = var.vpc_id
@@ -78,6 +78,30 @@ resource "aws_lb_listener_rule" "this" {
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.alb[each.key].arn
+  }
+
+  #dynamic "condition" {
+  # for_each = [for condition_rule in each.value.conditions :
+  #   condition_rule
+  #   if length(lookup(condition_rule, "path_patterns", [])) > 0
+  # ]
+
+  condition {
+    path_pattern {
+      values = lookup(each.value, "path_patterns", [])
+    }
+  }
+
+}
+
+# For BG
+resource "aws_lb_listener_rule" "bg" {
+  for_each     = var.enable_bluegreen_deployments == "yes" ? var.alb_target_groups : {}
+  listener_arn = var.create_alb && var.http_redirect == "no" ? one(aws_lb_listener.alb_http.*.arn) : one(aws_lb_listener.alb_https_bg.*.arn)
+  priority     = lookup(each.value, "priority", 1)
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_bg[each.key].arn
   }
 
   #dynamic "condition" {

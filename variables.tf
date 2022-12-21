@@ -346,7 +346,7 @@ variable "deployment_config_name" {
 
 variable "action_on_timeout" {
   type        = string
-  default     = "STOP_DEPLOYMENT"
+  default     = "CONTINUE_DEPLOYMENT"
   description = "action to be taken during timeout"
 }
 

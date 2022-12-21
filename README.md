@@ -46,6 +46,7 @@ No modules.
 | [aws_lb_listener.alb_http_redirect](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener.alb_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener.alb_https_bg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_listener_rule.bg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_listener_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_lb_target_group.alb_bg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
@@ -62,7 +63,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_account_id"></a> [account\_id](#input\_account\_id) | AWS Account ID | `string` | `""` | no |
-| <a name="input_action_on_timeout"></a> [action\_on\_timeout](#input\_action\_on\_timeout) | action to be taken during timeout | `string` | `"STOP_DEPLOYMENT"` | no |
+| <a name="input_action_on_timeout"></a> [action\_on\_timeout](#input\_action\_on\_timeout) | action to be taken during timeout | `string` | `"CONTINUE_DEPLOYMENT"` | no |
 | <a name="input_alb_listener_rules"></a> [alb\_listener\_rules](#input\_alb\_listener\_rules) | map of listener rules | `any` | `{}` | no |
 | <a name="input_alb_ssl_policy"></a> [alb\_ssl\_policy](#input\_alb\_ssl\_policy) | ALB SSL Policy for secure listener | `string` | `"ELBSecurityPolicy-TLS-1-2-Ext-2018-06"` | no |
 | <a name="input_alb_target_groups"></a> [alb\_target\_groups](#input\_alb\_target\_groups) | map of target groups to be attached to alb | `any` | `{}` | no |

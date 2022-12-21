@@ -1,11 +1,11 @@
 resource "aws_codedeploy_app" "this" {
-  count            = var.environment == "dev" && var.enable_cicd == "yes" && var.enable_bluegreen_deployments == "yes" ? 1 : 0
+  count            = var.enable_cicd == "yes" && var.enable_bluegreen_deployments == "yes" ? 1 : 0
   compute_platform = "ECS"
   name             = var.app_name
 }
 
 resource "aws_codedeploy_deployment_group" "this" {
-  for_each = var.environment == "dev" && var.enable_cicd == "yes" && var.enable_bluegreen_deployments == "yes" ? { for k, v in var.ecs_applications : k => v if v.attach_alb == "yes" } : {}
+  for_each = var.enable_cicd == "yes" && var.enable_bluegreen_deployments == "yes" ? { for k, v in var.ecs_applications : k => v if v.attach_alb == "yes" } : {}
 
   app_name               = one(aws_codedeploy_app.this.*.name)
   deployment_group_name  = "${each.value.name}-dg"
