@@ -15,7 +15,7 @@ resource "aws_codebuild_project" "this" {
     privileged_mode = true
 
     dynamic "environment_variable" {
-      for_each = concat(var.build_environment_variables)
+      for_each = var.build_environment_variables
 
       content {
         name  = environment_variable.value.name
