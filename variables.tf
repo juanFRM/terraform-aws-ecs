@@ -7,7 +7,7 @@ variable "app_name" {
 variable "app_count" {
   description = "Global var for number of replicas"
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "account_id" {

@@ -95,11 +95,10 @@ resource "aws_ecs_service" "this" {
     }
 
   }
-  #TODO
-  # lifecycle {
-  #   ignore_changes = [
-  #     desired_count
-  #   ]
-  # }
+  lifecycle {
+    ignore_changes = [
+      desired_count
+    ]
+  }
 
 }
