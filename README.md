@@ -24,6 +24,7 @@ No modules.
 | [aws_appautoscaling_target.ecs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_target) | resource |
 | [aws_cloudwatch_log_group.app_log_group_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_stream.app_log_stream_1](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_stream) | resource |
+| [aws_codebuild_project.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
 | [aws_ecr_repository.app](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
 | [aws_ecr_repository_policy.crossaccount](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
 | [aws_ecs_cluster.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_cluster) | resource |
@@ -45,6 +46,7 @@ No modules.
 | [aws_lb_listener.alb_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_listener_rule.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener_rule) | resource |
 | [aws_lb_target_group.alb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
+| [aws_security_group.codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.ecs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.efs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.load_balancer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
@@ -64,7 +66,11 @@ No modules.
 | <a name="input_alb_target_groups"></a> [alb\_target\_groups](#input\_alb\_target\_groups) | map of target groups to be attached to alb | `any` | `{}` | no |
 | <a name="input_app_count"></a> [app\_count](#input\_app\_count) | Global var for number of replicas | `number` | `1` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Application Name | `string` | `""` | no |
+| <a name="input_build_environment_variables"></a> [build\_environment\_variables](#input\_build\_environment\_variables) | env vars for codebuild | `any` | `{}` | no |
+| <a name="input_buildspec_file"></a> [buildspec\_file](#input\_buildspec\_file) | buildspec file for ecs | `string` | `""` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | acm cert arn for https alb listener | `string` | `""` | no |
+| <a name="input_cicd_role"></a> [cicd\_role](#input\_cicd\_role) | iam role for cicd | `string` | `""` | no |
+| <a name="input_compute_type"></a> [compute\_type](#input\_compute\_type) | codebuild compute type | `string` | `""` | no |
 | <a name="input_container_env_vars"></a> [container\_env\_vars](#input\_container\_env\_vars) | n/a | `any` | `[]` | no |
 | <a name="input_container_port"></a> [container\_port](#input\_container\_port) | global variable for container port | `number` | `null` | no |
 | <a name="input_create_alb"></a> [create\_alb](#input\_create\_alb) | Load balancer variables | `bool` | `false` | no |
@@ -74,6 +80,7 @@ No modules.
 | <a name="input_ecs_cluster_name"></a> [ecs\_cluster\_name](#input\_ecs\_cluster\_name) | Name of the ECS cluster | `string` | `"ecs-cluster"` | no |
 | <a name="input_ecs_internal_services"></a> [ecs\_internal\_services](#input\_ecs\_internal\_services) | list of internal service discoveries | `any` | `[]` | no |
 | <a name="input_ecs_services"></a> [ecs\_services](#input\_ecs\_services) | ecs services | `any` | `{}` | no |
+| <a name="input_enable_cicd"></a> [enable\_cicd](#input\_enable\_cicd) | enable or disable cicd pipeline | `string` | `"no"` | no |
 | <a name="input_enable_cross_zone_load_balancing"></a> [enable\_cross\_zone\_load\_balancing](#input\_enable\_cross\_zone\_load\_balancing) | Whether or not to enable cross zone load balancing. Valid only for NLB | `bool` | `false` | no |
 | <a name="input_enable_service_discovery"></a> [enable\_service\_discovery](#input\_enable\_service\_discovery) | whether or not to enable private service discovery | `string` | `"no"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment where the state backend will live. | `string` | `""` | no |
@@ -81,6 +88,7 @@ No modules.
 | <a name="input_health_check_port"></a> [health\_check\_port](#input\_health\_check\_port) | Health check port | `string` | `"traffic-port"` | no |
 | <a name="input_health_check_protocol"></a> [health\_check\_protocol](#input\_health\_check\_protocol) | Health check protocol | `string` | `"TCP"` | no |
 | <a name="input_http_redirect"></a> [http\_redirect](#input\_http\_redirect) | n/a | `string` | `""` | no |
+| <a name="input_image"></a> [image](#input\_image) | codebuild image | `string` | `""` | no |
 | <a name="input_is_internal"></a> [is\_internal](#input\_is\_internal) | n/a | `string` | `"no"` | no |
 | <a name="input_launch_type"></a> [launch\_type](#input\_launch\_type) | ECS Launch Type | `string` | `"FARGATE"` | no |
 | <a name="input_lb_access_logs_prefix"></a> [lb\_access\_logs\_prefix](#input\_lb\_access\_logs\_prefix) | Load Balancer access logs prefix | `string` | `"ALB"` | no |
@@ -89,7 +97,9 @@ No modules.
 | <a name="input_log_retention_in_days"></a> [log\_retention\_in\_days](#input\_log\_retention\_in\_days) | CloudWatch Log Retention (in days) | `string` | `"3"` | no |
 | <a name="input_logging_lb_bucket_name"></a> [logging\_lb\_bucket\_name](#input\_logging\_lb\_bucket\_name) | n/a | `string` | `""` | no |
 | <a name="input_private_dns"></a> [private\_dns](#input\_private\_dns) | private dns for internal service discovery | `string` | `""` | no |
+| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | project name for codebuild | `string` | `""` | no |
 | <a name="input_region"></a> [region](#input\_region) | Amazon region to use for retrieving data (e.g us-east-1) | `string` | `""` | no |
+| <a name="input_s3_build_logs_bucket"></a> [s3\_build\_logs\_bucket](#input\_s3\_build\_logs\_bucket) | build logs s3 bucket | `string` | `""` | no |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | list of subnets for EFS | `list(string)` | `[]` | no |
 | <a name="input_target_group_name"></a> [target\_group\_name](#input\_target\_group\_name) | Name of the Load Balancer Target Group | `string` | `""` | no |
 | <a name="input_target_group_port"></a> [target\_group\_port](#input\_target\_group\_port) | Port on which targets receive traffic | `number` | `3000` | no |

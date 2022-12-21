@@ -235,6 +235,57 @@ variable "lb_access_logs_prefix" {
 
 }
 
+# CodePipeline
+
+variable "enable_cicd" {
+  type        = string
+  default     = "no"
+  description = "enable or disable cicd pipeline"
+}
+
+variable "project_name" {
+  type        = string
+  description = "project name for codebuild"
+  default     = ""
+
+}
+
+variable "cicd_role" {
+  type        = string
+  default     = ""
+  description = "iam role for cicd"
+}
+
+variable "compute_type" {
+  type        = string
+  default     = ""
+  description = "codebuild compute type"
+}
+
+variable "image" {
+  type        = string
+  default     = ""
+  description = "codebuild image"
+}
+
+variable "build_environment_variables" {
+  type        = any
+  default     = {}
+  description = "env vars for codebuild"
+}
+
+variable "s3_build_logs_bucket" {
+  type        = string
+  default     = ""
+  description = "build logs s3 bucket"
+}
+
+variable "buildspec_file" {
+  type        = string
+  default     = ""
+  description = "buildspec file for ecs"
+}
+
 locals {
   common_tags = {
     environment = var.environment
