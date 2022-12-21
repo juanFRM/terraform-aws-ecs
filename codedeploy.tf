@@ -33,7 +33,7 @@ resource "aws_codedeploy_deployment_group" "this" {
   }
   ecs_service {
     cluster_name = var.ecs_cluster_name
-    service_name = each.value.name
+    service_name = aws_ecs_service.this[each.key].name
   }
 
   load_balancer_info {
