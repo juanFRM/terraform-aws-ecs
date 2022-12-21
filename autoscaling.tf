@@ -1,7 +1,7 @@
 resource "aws_appautoscaling_target" "ecs" {
   for_each = {
     for k, v in var.ecs_applications : k => v
-    if v.enable_service != ""
+    if v.enable_service == "yes"
   }
   max_capacity       = 4
   min_capacity       = 1
@@ -14,7 +14,7 @@ resource "aws_appautoscaling_target" "ecs" {
 resource "aws_appautoscaling_policy" "ecs_scale_cpu" {
   for_each = {
     for k, v in var.ecs_applications : k => v
-    if v.enable_service != ""
+    if v.enable_service == "yes"
   }
   name               = "${aws_ecs_service.this[each.key].name}-scaling-policy-cpu"
   policy_type        = "TargetTrackingScaling"
@@ -34,7 +34,7 @@ resource "aws_appautoscaling_policy" "ecs_scale_cpu" {
 resource "aws_appautoscaling_policy" "ecs_scale_memory" {
   for_each = {
     for k, v in var.ecs_applications : k => v
-    if v.enable_service != ""
+    if v.enable_service != "yes"
   }
   name               = "${aws_ecs_service.this[each.key].name}-scaling-policy-memory"
   policy_type        = "TargetTrackingScaling"
