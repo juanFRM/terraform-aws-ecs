@@ -42,6 +42,10 @@ resource "aws_lb_target_group" "alb" {
     interval            = 30
     matcher             = "200,403,404,400,401,301,302"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Target Group for BG Deployments
@@ -67,6 +71,10 @@ resource "aws_lb_target_group" "alb_bg" {
     interval            = 30
     matcher             = "200,403,404,400,401,301,302"
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # ALB rule
@@ -91,7 +99,10 @@ resource "aws_lb_listener_rule" "this" {
       values = lookup(each.value, "path_patterns", [])
     }
   }
-
+  lifecycle {
+    ignore_changes = [action]
+  }
+  depends_on = [aws_lb_target_group.alb]
 }
 
 # For BG
@@ -115,6 +126,10 @@ resource "aws_lb_listener_rule" "bg" {
       values = lookup(each.value, "path_patterns", [])
     }
   }
+  lifecycle {
+    ignore_changes = [action.0.target_group_arn]
+  }
+  depends_on = [aws_lb_target_group.alb_bg]
 
 }
 

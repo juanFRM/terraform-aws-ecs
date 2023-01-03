@@ -59,6 +59,17 @@ resource "aws_security_group" "load_balancer" {
     cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS008
   }
 
+  # condition for BG deployments
+  dynamic "ingress" {
+    for_each = var.enable_bluegreen_deployments == "yes" ? [1] : []
+    content {
+      from_port   = 9443
+      to_port     = 9443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS008
+    }
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

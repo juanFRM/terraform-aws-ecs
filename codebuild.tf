@@ -1,5 +1,5 @@
 resource "aws_codebuild_project" "this" {
-  for_each      = var.environment == "dev" && var.enable_cicd == "yes" ? var.ecs_applications : {}
+  for_each      = var.enable_cicd == "yes" ? var.ecs_applications : {}
   name          = "${var.project_name}-ecs-${each.value.name}"
   build_timeout = "10"
   service_role  = var.cicd_role
@@ -48,10 +48,12 @@ resource "aws_codebuild_project" "this" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile(var.buildspec_file, {
-      REGION         = var.region
-      AWS_ACCOUNT_ID = var.account_id
-      ECR_REPO_NAME  = each.key
-      CONTAINER_NAME = each.value.name
+      REGION          = var.region
+      AWS_ACCOUNT_ID  = var.ecr_account_id
+      ECR_REPO_NAME   = each.key
+      CONTAINER_NAME  = each.value.name
+      CONTAINER_PORT  = lookup(each.value, "container_port", var.container_port)
+      TASK_DEFINITION = each.value.name
     })
   }
 

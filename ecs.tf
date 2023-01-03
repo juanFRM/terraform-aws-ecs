@@ -74,6 +74,9 @@ resource "aws_ecs_service" "this" {
   desired_count = lookup(each.value, "app_count", var.app_count)
 
   launch_type = lookup(each.value, "launch_type", "FARGATE")
+  deployment_controller {
+    type = each.value.attach_alb == "yes" ? "CODE_DEPLOY" : "ECS"
+  }
 
   network_configuration {
     subnets         = var.subnets
@@ -97,7 +100,7 @@ resource "aws_ecs_service" "this" {
   }
   lifecycle {
     ignore_changes = [
-      desired_count
+      desired_count, task_definition, load_balancer
     ]
   }
 

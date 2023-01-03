@@ -35,19 +35,23 @@ resource "aws_codepipeline" "pipeline" {
   #Build
   stage {
     name = "Build"
-
-    action {
-      name             = "Build"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      version          = "1"
-      input_artifacts  = ["source"]
-      output_artifacts = ["build-artifacts"]
-      configuration = {
-        ProjectName = aws_codebuild_project.this[each.key].name
+    dynamic "action" {
+      for_each = var.deploy_environments
+      content {
+        name             = action.key
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        version          = "1"
+        role_arn         = action.key != "dev" ? action.value["role_arn"] : null
+        input_artifacts  = ["source"]
+        output_artifacts = ["build-${action.key}"]
+        configuration = {
+          ProjectName = aws_codebuild_project.this[each.key].name
+        }
       }
     }
+
 
   }
 
@@ -56,109 +60,48 @@ resource "aws_codepipeline" "pipeline" {
   dynamic "stage" {
     for_each = {
       for k, v in var.deploy_environments : k => v
-      if k == "dev" && each.value.enable_service == "yes"
+      if each.value.enable_service == "yes"
     }
     content {
-      name = "Deploy-Dev"
+      name = title("${stage.key}-deploy")
+      dynamic "action" {
+        for_each = "${stage.key}" != "dev" ? [1] : []
+        content {
+          name     = "${stage.key}-approval"
+          category = "Approval"
+          owner    = "AWS"
+          provider = "Manual"
+          version  = "1"
+
+        }
+      }
       action {
-        name            = "deploy-${stage.key}"
+        name            = "${stage.key}-deploy"
         category        = "Deploy"
         owner           = "AWS"
-        provider        = "ECS"
+        provider        = "${each.value.attach_alb}" != "yes" ? "ECS" : "CodeDeployToECS"
         version         = "1"
-        input_artifacts = ["build-artifacts"]
-        configuration = {
+        input_artifacts = ["build-${stage.key}"]
+        run_order       = "${stage.key}" == "dev" ? 1 : 2
+        role_arn        = stage.key != "dev" ? stage.value["role_arn"] : null
+        configuration = "${each.value.attach_alb}" != "yes" ? {
           ClusterName       = var.ecs_cluster_name
           ServiceName       = each.value.name
           FileName          = "imagedefinitions.json"
           DeploymentTimeout = "15"
+          } : {
+          ApplicationName                = var.app_name
+          DeploymentGroupName            = "${each.value.name}-dg"
+          TaskDefinitionTemplateArtifact = "build-${stage.key}"
+          TaskDefinitionTemplatePath     = "taskdef.json"
+          AppSpecTemplateArtifact        = "build-${stage.key}"
+          AppSpecTemplatePath            = "appspec.yaml"
         }
+
       }
+
     }
   }
-
-  dynamic "stage" {
-    for_each = {
-      for k, v in var.deploy_environments : k => v
-      if k == "test" && each.value.enable_service == "yes"
-    }
-    content {
-      name = "Approve"
-      action {
-        name     = "Stage-Approval"
-        category = "Approval"
-        owner    = "AWS"
-        provider = "Manual"
-        version  = "1"
-      }
-    }
-  }
-
-  dynamic "stage" {
-    for_each = {
-      for k, v in var.deploy_environments : k => v
-      if k == "test" && each.value.enable_service == "yes"
-    }
-    content {
-      name = "Deploy-Test"
-      action {
-        name            = "deploy-${stage.key}"
-        category        = "Deploy"
-        owner           = "AWS"
-        provider        = "ECS"
-        version         = "1"
-        input_artifacts = ["build-artifacts"]
-        configuration = {
-          ClusterName       = var.ecs_cluster_name
-          ServiceName       = each.value.name
-          FileName          = "imagedefinitions.json"
-          DeploymentTimeout = "15"
-        }
-      }
-    }
-  }
-
-  dynamic "stage" {
-    for_each = {
-      for k, v in var.deploy_environments : k => v
-      if k == "prod" && each.value.enable_service == "yes"
-    }
-    content {
-      name = "Approve"
-      action {
-        name     = "Prod-Approval"
-        category = "Approval"
-        owner    = "AWS"
-        provider = "Manual"
-        version  = "1"
-      }
-    }
-  }
-
-  dynamic "stage" {
-    for_each = {
-      for k, v in var.deploy_environments : k => v
-      if k == "prod" && each.value.enable_service == "yes"
-    }
-    content {
-      name = "Deploy-Prod"
-      action {
-        name            = "deploy-${stage.key}"
-        category        = "Deploy"
-        owner           = "AWS"
-        provider        = "ECS"
-        version         = "1"
-        input_artifacts = ["build-artifacts"]
-        configuration = {
-          ClusterName       = var.ecs_cluster_name
-          ServiceName       = each.value.name
-          FileName          = "imagedefinitions.json"
-          DeploymentTimeout = "15"
-        }
-      }
-    }
-  }
-
 
 }
 

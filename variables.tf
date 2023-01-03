@@ -358,7 +358,7 @@ variable "wait_time_in_minutes" {
 
 variable "termination_wait_time_in_minutes" {
   type        = number
-  default     = 5
+  default     = 0
   description = "The number of minutes to wait after a successful blue/green deployment before terminating instances from the original environment"
 }
 
