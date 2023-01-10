@@ -86,7 +86,7 @@ resource "aws_codepipeline" "pipeline" {
         role_arn        = stage.key != "dev" ? stage.value["role_arn"] : null
         configuration = "${each.value.attach_alb}" != "yes" ? {
           ClusterName       = var.ecs_cluster_name
-          ServiceName       = each.value.name
+          ServiceName       = "${each.value.name}-service"
           FileName          = "imagedefinitions.json"
           DeploymentTimeout = "15"
           } : {
