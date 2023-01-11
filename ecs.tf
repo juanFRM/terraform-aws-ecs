@@ -12,8 +12,8 @@ resource "aws_ecs_cluster_capacity_providers" "this" {
 }
 
 resource "aws_ecs_task_definition" "this" {
-  for_each                 = var.task_definitions
-  family                   = lookup(each.value, "family", var.app_name)
+  for_each                 = var.ecs_applications
+  family                   = lookup(each.value, "name", var.app_name)
   requires_compatibilities = ["FARGATE"]
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "this" {
   container_definitions = jsonencode([
     {
       name      = lookup(each.value, "name", var.app_name)
-      image     = each.value.ecr_image_url
+      image     = "${var.ecr_account_id}.dkr.ecr.${var.region}.amazonaws.com/${each.key}"
       cpu       = lookup(each.value, "cpu", 512)
       memory    = lookup(each.value, "memory", 1024)
       essential = true
@@ -42,9 +42,9 @@ resource "aws_ecs_task_definition" "this" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = lookup(each.value, "log_group", "/ecs/${var.app_name}")
+          awslogs-group         = lookup(each.value, "log_group", "/ecs/${each.value.name}")
           awslogs-region        = "${var.region}"
-          awslogs-stream-prefix = lookup(each.value, "log_stream_prefix", "${var.app_name}-log-stream")
+          awslogs-stream-prefix = lookup(each.value, "log_stream_prefix", "${each.value.name}-log-stream")
         }
       }
 
@@ -62,14 +62,21 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 resource "aws_ecs_service" "this" {
-  for_each        = var.ecs_services
-  name            = lookup(each.value, "name", "${var.app_name}-service")
+  for_each = {
+    for k, v in var.ecs_applications : k => v
+    if v.enable_service == "yes"
+  }
+
+  name            = "${each.value.name}-service"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this[each.key].arn
 
-  desired_count = lookup(each.value, "app_count", 1)
+  desired_count = lookup(each.value, "app_count", var.app_count)
 
   launch_type = lookup(each.value, "launch_type", "FARGATE")
+  deployment_controller {
+    type = each.value.attach_alb == "yes" ? "CODE_DEPLOY" : "ECS"
+  }
 
   network_configuration {
     subnets         = var.subnets
@@ -78,7 +85,7 @@ resource "aws_ecs_service" "this" {
   dynamic "service_registries" {
     for_each = var.enable_service_discovery == "yes" ? [1] : []
     content {
-      registry_arn = aws_service_discovery_service.this[index(var.ecs_internal_services, each.key)].arn
+      registry_arn = aws_service_discovery_service.this[each.key].arn
     }
   }
 
@@ -86,9 +93,15 @@ resource "aws_ecs_service" "this" {
     for_each = each.value.attach_alb == "yes" ? [1] : []
     content {
       target_group_arn = lookup(each.value, "target_group_arn", aws_lb_target_group.alb[each.key].arn)
-      container_name   = lookup(each.value, "container_name", var.task_definitions[each.key].name)
+      container_name   = lookup(each.value, "container_name", var.ecs_applications[each.key].name)
       container_port   = lookup(each.value, "container_port", var.container_port)
     }
 
   }
+  lifecycle {
+    ignore_changes = [
+      desired_count, task_definition, load_balancer
+    ]
+  }
+
 }

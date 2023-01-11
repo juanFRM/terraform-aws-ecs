@@ -4,8 +4,20 @@ variable "app_name" {
   default     = ""
 }
 
+variable "app_count" {
+  description = "Global var for number of replicas"
+  type        = number
+  default     = 1
+}
+
 variable "account_id" {
   description = "AWS Account ID"
+  type        = string
+  default     = ""
+}
+
+variable "ecr_account_id" {
+  description = "AWS Account ID where ECR repos are created"
   type        = string
   default     = ""
 }
@@ -83,6 +95,18 @@ variable "ecs_services" {
   type        = any
   default     = {}
   description = "ecs services"
+}
+
+variable "ecs_applications" {
+  type        = any
+  default     = {}
+  description = "ecs applications"
+}
+
+variable "ecr_policy" {
+  type        = any
+  default     = {}
+  description = "ECR policy"
 }
 
 variable "container_env_vars" {
@@ -209,6 +233,133 @@ variable "lb_access_logs_prefix" {
   type        = string
   default     = "ALB"
 
+}
+
+# CodePipeline
+
+variable "enable_cicd" {
+  type        = string
+  default     = "no"
+  description = "enable or disable cicd pipeline"
+}
+
+variable "enable_bluegreen_deployments" {
+  type        = string
+  default     = "no"
+  description = "enable or disable BG deployments"
+}
+
+variable "project_name" {
+  type        = string
+  description = "project name for codebuild"
+  default     = ""
+
+}
+
+variable "cicd_role" {
+  type        = string
+  default     = ""
+  description = "iam role for cicd"
+}
+
+variable "compute_type" {
+  type        = string
+  default     = ""
+  description = "codebuild compute type"
+}
+
+variable "image" {
+  type        = string
+  default     = ""
+  description = "codebuild image"
+}
+
+variable "build_environment_variables" {
+  type        = any
+  default     = {}
+  description = "env vars for codebuild"
+}
+
+variable "s3_build_logs_bucket" {
+  type        = string
+  default     = ""
+  description = "build logs s3 bucket"
+}
+
+variable "buildspec_file" {
+  type        = string
+  default     = ""
+  description = "buildspec file for ecs"
+}
+
+variable "codebuild_security_group" {
+  type        = string
+  default     = ""
+  description = "codebuild security group"
+}
+
+variable "s3_artifact_store" {
+  type        = string
+  default     = ""
+  description = "s3 bucket to store pipeline artifacts"
+}
+
+variable "artifact_bucket_key" {
+  type        = string
+  default     = ""
+  description = "KMS key associated with artifact bucket"
+}
+
+variable "codestar_connection_arn" {
+  type        = string
+  default     = ""
+  description = "codestar connection arn"
+}
+variable "repo_owner" {
+  type        = string
+  default     = ""
+  description = "repo owner"
+}
+
+variable "repo_name" {
+  type        = string
+  default     = ""
+  description = "repo name"
+}
+
+variable "repo_branch" {
+  type        = string
+  default     = ""
+  description = "repo branch"
+}
+variable "deploy_environments" {
+  type        = any
+  default     = {}
+  description = "deploy environments"
+}
+
+variable "deployment_config_name" {
+  type        = string
+  default     = "CodeDeployDefault.ECSAllAtOnce"
+  description = "CodeDeploy deployment config name"
+}
+
+variable "action_on_timeout" {
+  type        = string
+  default     = "CONTINUE_DEPLOYMENT"
+  description = "action to be taken during timeout"
+}
+
+variable "wait_time_in_minutes" {
+  type        = number
+  default     = 20
+  description = "The number of minutes to wait before the status of a blue/green deployment changed to Stopped if rerouting is not started manually."
+}
+
+variable "termination_wait_time_in_minutes" {
+  type        = number
+  default     = 0
+  description = "The number of minutes to wait after a successful blue/green deployment before terminating instances from the original environment"
 }
 
 locals {
