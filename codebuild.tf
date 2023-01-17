@@ -48,6 +48,7 @@ resource "aws_codebuild_project" "this" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile(var.buildspec_file, {
+      ENV             = var.environment
       REGION          = var.region
       AWS_ACCOUNT_ID  = var.ecr_account_id
       ECR_REPO_NAME   = each.key
