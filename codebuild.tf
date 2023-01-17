@@ -54,6 +54,7 @@ resource "aws_codebuild_project" "this" {
       CONTAINER_NAME  = each.value.name
       CONTAINER_PORT  = lookup(each.value, "container_port", var.container_port)
       TASK_DEFINITION = each.value.name
+      GIT_REPO_NAME   = lookup(each.value, "git_repo_name", "") # To support git submodules
     })
   }
 
