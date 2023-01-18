@@ -28,8 +28,8 @@ resource "aws_codebuild_project" "this" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = "${each.value.name}-log-group-${var.environment}"
-      stream_name = "${each.value.name}-log-stream-${var.environment}"
+      group_name  = aws_cloudwatch_log_group.codebuild[each.key].name
+      stream_name = aws_cloudwatch_log_stream.codebuild[each.key].name
     }
 
     s3_logs {
@@ -48,12 +48,14 @@ resource "aws_codebuild_project" "this" {
   source {
     type = "CODEPIPELINE"
     buildspec = templatefile(var.buildspec_file, {
+      ENV             = var.environment
       REGION          = var.region
       AWS_ACCOUNT_ID  = var.ecr_account_id
       ECR_REPO_NAME   = each.key
       CONTAINER_NAME  = each.value.name
       CONTAINER_PORT  = lookup(each.value, "container_port", var.container_port)
       TASK_DEFINITION = each.value.name
+      GIT_REPO_NAME   = lookup(each.value, "repo_name", var.repo_name) # To support git submodules
     })
   }
 
