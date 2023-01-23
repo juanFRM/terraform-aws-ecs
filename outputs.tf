@@ -1,5 +1,5 @@
 output "task_arns" {
-  value = { for k, v in aws_ecs_task_definition.this.*.arn : k => v.id }
+  value = { for k, v in aws_ecs_task_definition.this : k => v.arn }
 }
 
 output "cluster_arn" {
