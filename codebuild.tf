@@ -1,5 +1,5 @@
 resource "aws_codebuild_project" "this" {
-  for_each      = var.enable_cicd == "yes" ? var.ecs_applications : {}
+  for_each      = var.environment == "dev" && var.enable_cicd == "yes" ? var.ecs_applications : {}
   name          = "${var.project_name}-ecs-${each.value.name}"
   build_timeout = "10"
   service_role  = var.cicd_role

@@ -40,7 +40,7 @@ resource "aws_codedeploy_deployment_group" "this" {
   load_balancer_info {
     target_group_pair_info {
       prod_traffic_route {
-        listener_arns = [one(aws_lb_listener.alb_https.*.arn)]
+        listener_arns = var.http_redirect == "yes" && var.certificate_arn != "" ? [one(aws_lb_listener.alb_https.*.arn)] : [one(aws_lb_listener.alb_http.*.arn)]
       }
       target_group {
         name = aws_lb_target_group.alb[each.key].name
@@ -49,7 +49,7 @@ resource "aws_codedeploy_deployment_group" "this" {
         name = aws_lb_target_group.alb_bg[each.key].name
       }
       test_traffic_route {
-        listener_arns = [one(aws_lb_listener.alb_https_bg.*.arn)]
+        listener_arns = var.http_redirect == "yes" && var.certificate_arn != "" ? [one(aws_lb_listener.alb_https.*.arn)] : [one(aws_lb_listener.alb_http.*.arn)]
       }
     }
   }

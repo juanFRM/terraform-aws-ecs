@@ -35,37 +35,31 @@ resource "aws_codepipeline" "pipeline" {
   #Build
   stage {
     name = "Build"
-    dynamic "action" {
-      for_each = var.deploy_environments
-      content {
-        name             = action.key
-        category         = "Build"
-        owner            = "AWS"
-        provider         = "CodeBuild"
-        version          = "1"
-        role_arn         = action.key != "dev" ? action.value["role_arn"] : null
-        input_artifacts  = ["source"]
-        output_artifacts = ["build-${action.key}"]
-        configuration = {
-          ProjectName = aws_codebuild_project.this[each.key].name
-        }
+    action {
+      name     = "Build-Image"
+      category = "Build"
+      owner    = "AWS"
+      provider = "CodeBuild"
+      version  = "1"
+      #role_arn         = action.key != "dev" ? action.value["role_arn"] : null
+      input_artifacts  = ["source"]
+      output_artifacts = ["build"]
+      configuration = {
+        ProjectName = aws_codebuild_project.this[each.key].name
       }
     }
-
-
   }
 
   # Deploy
 
   dynamic "stage" {
     for_each = {
-      for k, v in var.deploy_environments : k => v
-      if each.value.enable_service == "yes"
+      for k, v in var.deploy_environments : format("%.4d", k) => v
     }
     content {
-      name = title("${stage.key}-deploy")
+      name = title("${stage.value.env_name}")
       dynamic "action" {
-        for_each = "${stage.key}" != "dev" ? [1] : []
+        for_each = "${stage.value.env_name}" != "dev" ? [1] : []
         content {
           name     = "${stage.key}-approval"
           category = "Approval"
@@ -76,14 +70,14 @@ resource "aws_codepipeline" "pipeline" {
         }
       }
       action {
-        name            = "${stage.key}-deploy"
+        name            = "${stage.value.env_name}-deploy"
         category        = "Deploy"
         owner           = "AWS"
         provider        = "${each.value.attach_alb}" != "yes" ? "ECS" : "CodeDeployToECS"
         version         = "1"
-        input_artifacts = ["build-${stage.key}"]
-        run_order       = "${stage.key}" == "dev" ? 1 : 2
-        role_arn        = stage.key != "dev" ? stage.value["role_arn"] : null
+        input_artifacts = ["build"]
+        run_order       = "${stage.value.env_name}" == "dev" ? 1 : 2
+        role_arn        = stage.value.env_name != "dev" ? stage.value["role_arn"] : null
         configuration = "${each.value.attach_alb}" != "yes" ? {
           ClusterName       = var.ecs_cluster_name
           ServiceName       = "${each.value.name}-service"
@@ -92,9 +86,9 @@ resource "aws_codepipeline" "pipeline" {
           } : {
           ApplicationName                = var.app_name
           DeploymentGroupName            = "${each.value.name}-dg"
-          TaskDefinitionTemplateArtifact = "build-${stage.key}"
+          TaskDefinitionTemplateArtifact = "build"
           TaskDefinitionTemplatePath     = "taskdef.json"
-          AppSpecTemplateArtifact        = "build-${stage.key}"
+          AppSpecTemplateArtifact        = "build"
           AppSpecTemplatePath            = "appspec.yaml"
         }
 
