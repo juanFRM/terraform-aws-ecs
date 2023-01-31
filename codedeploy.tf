@@ -49,7 +49,7 @@ resource "aws_codedeploy_deployment_group" "this" {
         name = aws_lb_target_group.alb_bg[each.key].name
       }
       test_traffic_route {
-        listener_arns = var.http_redirect == "yes" && var.certificate_arn != "" ? [one(aws_lb_listener.alb_https.*.arn)] : [one(aws_lb_listener.alb_http.*.arn)]
+        listener_arns = var.http_redirect == "yes" && var.certificate_arn != "" ? [one(aws_lb_listener.alb_https_bg.*.arn)] : [one(aws_lb_listener.alb_http_bg.*.arn)]
       }
     }
   }
