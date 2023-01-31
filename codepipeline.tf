@@ -61,7 +61,7 @@ resource "aws_codepipeline" "pipeline" {
       dynamic "action" {
         for_each = "${stage.value.env_name}" != "dev" ? [1] : []
         content {
-          name     = "${stage.key}-approval"
+          name     = "${stage.value.env_name}-approval"
           category = "Approval"
           owner    = "AWS"
           provider = "Manual"
