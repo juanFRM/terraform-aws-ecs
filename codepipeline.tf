@@ -35,18 +35,22 @@ resource "aws_codepipeline" "pipeline" {
   #Build
   stage {
     name = "Build"
-    action {
-      name     = "Build-Image"
-      category = "Build"
-      owner    = "AWS"
-      provider = "CodeBuild"
-      version  = "1"
-      #role_arn         = action.key != "dev" ? action.value["role_arn"] : null
-      input_artifacts  = ["source"]
-      output_artifacts = ["build"]
-      configuration = {
-        ProjectName = aws_codebuild_project.this[each.key].name
+    dynamic "action" {
+      for_each = var.deploy_environments
+      content {
+        name             = action.value.env_name
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        version          = "1"
+        role_arn         = action.value.env_name != "dev" ? action.value["role_arn"] : null
+        input_artifacts  = ["source"]
+        output_artifacts = ["build-${action.value.env_name}"]
+        configuration = {
+          ProjectName = aws_codebuild_project.this[each.key].name
+        }
       }
+
     }
   }
 
@@ -75,7 +79,7 @@ resource "aws_codepipeline" "pipeline" {
         owner           = "AWS"
         provider        = "${each.value.attach_alb}" != "yes" ? "ECS" : "CodeDeployToECS"
         version         = "1"
-        input_artifacts = ["build"]
+        input_artifacts = ["build-${stage.value.env_name}"]
         run_order       = "${stage.value.env_name}" == "dev" ? 1 : 2
         role_arn        = stage.value.env_name != "dev" ? stage.value["role_arn"] : null
         configuration = "${each.value.attach_alb}" != "yes" ? {
@@ -86,9 +90,9 @@ resource "aws_codepipeline" "pipeline" {
           } : {
           ApplicationName                = var.app_name
           DeploymentGroupName            = "${each.value.name}-dg"
-          TaskDefinitionTemplateArtifact = "build"
+          TaskDefinitionTemplateArtifact = "build-${stage.value.env_name}"
           TaskDefinitionTemplatePath     = "taskdef.json"
-          AppSpecTemplateArtifact        = "build"
+          AppSpecTemplateArtifact        = "build-${stage.value.env_name}"
           AppSpecTemplatePath            = "appspec.yaml"
         }
 
