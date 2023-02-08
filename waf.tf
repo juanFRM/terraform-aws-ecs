@@ -1,4 +1,4 @@
-module "waf_cdn" {
+module "waf" {
   count  = var.create_alb ? 1 : 0
   source = "github.com/revstarconsulting/terraform-aws-waf?ref=v1.1.0"
 
