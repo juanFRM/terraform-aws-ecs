@@ -13,7 +13,9 @@
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_waf_cdn"></a> [waf\_cdn](#module\_waf\_cdn) | github.com/revstarconsulting/terraform-aws-waf | v1.1.0 |
 
 ## Resources
 
