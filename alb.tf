@@ -108,7 +108,7 @@ resource "aws_lb_listener_rule" "this" {
 # For BG
 resource "aws_lb_listener_rule" "bg" {
   for_each     = var.enable_bluegreen_deployments == "yes" ? var.alb_target_groups : {}
-  listener_arn = var.create_alb && var.http_redirect == "no" ? one(aws_lb_listener.alb_http.*.arn) : one(aws_lb_listener.alb_https_bg.*.arn)
+  listener_arn = var.create_alb && var.http_redirect == "no" ? one(aws_lb_listener.alb_http_bg.*.arn) : one(aws_lb_listener.alb_https_bg.*.arn)
   priority     = lookup(each.value, "priority", 1)
   action {
     type             = "forward"
@@ -163,8 +163,13 @@ resource "aws_lb_listener" "alb_http" {
   depends_on = [aws_lb_target_group.alb]
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.alb[0].arn
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Invalid Endpoint"
+      status_code  = "200"
+    }
+
   }
 }
 
@@ -176,6 +181,25 @@ resource "aws_lb_listener" "alb_https" {
   ssl_policy        = var.alb_ssl_policy
   certificate_arn   = var.certificate_arn
   depends_on        = [aws_lb_target_group.alb]
+
+  default_action {
+    type = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Invalid Endpoint"
+      status_code  = "200"
+    }
+
+  }
+}
+
+resource "aws_lb_listener" "alb_http_bg" {
+  count             = var.create_alb && var.http_redirect == "no" && var.certificate_arn == "" && var.enable_bluegreen_deployments == "yes" ? 1 : 0
+  load_balancer_arn = aws_lb.alb[0].id
+  port              = "8080"
+  protocol          = "HTTP"
+
+  depends_on = [aws_lb_target_group.alb_bg]
 
   default_action {
     type = "fixed-response"
