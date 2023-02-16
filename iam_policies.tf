@@ -20,7 +20,8 @@ data "aws_iam_policy_document" "ecs_tasks" {
       "s3:*",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "logs:CreateLogGroup"
+      "logs:CreateLogGroup",
+      "location:*"
     ]
     resources = ["*"]
   }
