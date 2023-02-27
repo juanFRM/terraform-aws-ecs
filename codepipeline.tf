@@ -79,6 +79,7 @@ resource "aws_codepipeline" "pipeline" {
         owner           = "AWS"
         provider        = "CodeBuild"
         version         = "1"
+        run_order       = "${stage.value.name}" == "dev" ? 1 : 2
         role_arn        = stage.value.name != "dev" ? stage.value["role_arn"] : null
         input_artifacts = ["source"]
         #output_artifacts = ["build-${action.value.name}"]
@@ -94,7 +95,7 @@ resource "aws_codepipeline" "pipeline" {
         provider        = "${each.value.attach_alb}" != "yes" ? "ECS" : "CodeDeployToECS"
         version         = "1"
         input_artifacts = ["build-${stage.value.name}"]
-        run_order       = "${stage.value.name}" == "dev" ? 1 : 2
+        run_order       = "${stage.value.name}" == "dev" ? 2 : 3
         role_arn        = stage.value.name != "dev" ? stage.value["role_arn"] : null
         configuration = "${each.value.attach_alb}" != "yes" ? {
           ClusterName       = var.ecs_cluster_name
