@@ -74,6 +74,20 @@ resource "aws_codepipeline" "pipeline" {
         }
       }
       action {
+        name            = "run-migration"
+        category        = "Build"
+        owner           = "AWS"
+        provider        = "CodeBuild"
+        version         = "1"
+        role_arn        = stage.value.name != "dev" ? stage.value["role_arn"] : null
+        input_artifacts = ["source"]
+        #output_artifacts = ["build-${action.value.name}"]
+        configuration = {
+          ProjectName = stage.value["migration_build"]
+        }
+
+      }
+      action {
         name            = "${stage.value.name}-deploy"
         category        = "Deploy"
         owner           = "AWS"
