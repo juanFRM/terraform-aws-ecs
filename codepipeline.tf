@@ -73,31 +73,35 @@ resource "aws_codepipeline" "pipeline" {
 
         }
       }
-      action {
-        name            = "run-migration"
-        category        = "Build"
-        owner           = "AWS"
-        provider        = "CodeBuild"
-        version         = "1"
-        run_order       = "${stage.value.name}" == "dev" ? 1 : 2
-        role_arn        = stage.value.name != "dev" ? stage.value["role_arn"] : null
-        input_artifacts = ["source"]
-        #output_artifacts = ["build-${action.value.name}"]
-        configuration = {
-          ProjectName = stage.value["migration_build"]
+      dynamic "action" {
+        for_each = var.enable_migration == "yes" ? [1] : []
+        content {
+          name            = "run-migration"
+          category        = "Build"
+          owner           = "AWS"
+          provider        = "CodeBuild"
+          version         = "1"
+          run_order       = "${stage.value.name}" == "dev" ? 1 : 2
+          role_arn        = stage.value.name != "dev" ? stage.value["role_arn"] : null
+          input_artifacts = ["source"]
+          #output_artifacts = ["build-${action.value.name}"]
+          configuration = {
+            ProjectName = stage.value["migration_build"]
+          }
         }
+
 
       }
       action {
         name            = "${stage.value.name}-deploy"
         category        = "Deploy"
         owner           = "AWS"
-        provider        = "${each.value.attach_alb}" != "yes" ? "ECS" : "CodeDeployToECS"
+        provider        = "${each.value.attach_alb}" != "yes" || var.enable_bluegreen_deployments == "no" ? "ECS" : "CodeDeployToECS"
         version         = "1"
         input_artifacts = ["build-${stage.value.name}"]
         run_order       = "${stage.value.name}" == "dev" ? 2 : 3
         role_arn        = stage.value.name != "dev" ? stage.value["role_arn"] : null
-        configuration = "${each.value.attach_alb}" != "yes" ? {
+        configuration = "${each.value.attach_alb}" != "yes" || var.enable_bluegreen_deployments == "no" ? {
           ClusterName       = var.ecs_cluster_name
           ServiceName       = "${each.value.name}-service"
           FileName          = "imagedefinitions.json"

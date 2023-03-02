@@ -96,6 +96,7 @@
 | <a name="input_enable_bluegreen_deployments"></a> [enable\_bluegreen\_deployments](#input\_enable\_bluegreen\_deployments) | enable or disable BG deployments | `string` | `"no"` | no |
 | <a name="input_enable_cicd"></a> [enable\_cicd](#input\_enable\_cicd) | enable or disable cicd pipeline | `string` | `"no"` | no |
 | <a name="input_enable_cross_zone_load_balancing"></a> [enable\_cross\_zone\_load\_balancing](#input\_enable\_cross\_zone\_load\_balancing) | Whether or not to enable cross zone load balancing. Valid only for NLB | `bool` | `false` | no |
+| <a name="input_enable_migration"></a> [enable\_migration](#input\_enable\_migration) | Add migration step in CodePipeline | `string` | `"no"` | no |
 | <a name="input_enable_service_discovery"></a> [enable\_service\_discovery](#input\_enable\_service\_discovery) | whether or not to enable private service discovery | `string` | `"no"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment where the state backend will live. | `string` | `""` | no |
 | <a name="input_health_check_path"></a> [health\_check\_path](#input\_health\_check\_path) | Health check path for the default target group | `string` | `"/"` | no |

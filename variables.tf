@@ -362,6 +362,12 @@ variable "termination_wait_time_in_minutes" {
   description = "The number of minutes to wait after a successful blue/green deployment before terminating instances from the original environment"
 }
 
+variable "enable_migration" {
+  type        = string
+  default     = "no"
+  description = "Add migration step in CodePipeline"
+}
+
 locals {
   common_tags = {
     environment = var.environment
